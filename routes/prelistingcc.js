@@ -8,6 +8,8 @@ var numeral = require('numeral');
 var dateFormat = require('dateformat');
 const bodyParser = require("body-parser");
 
+const LETTERS_DIR = '/Users/kevinabongo/demands/';
+
 const { Document, Paragraph, Packer, TextRun, BorderStyle, Borders } = docx;
 
 router.use(bodyParser.urlencoded({
@@ -216,14 +218,6 @@ router.post('/download', function (req, res) {
   document.addParagraph(pcrb8);
   //
 
-  //
-  /*table.getCell(0, 2).addContent(new Paragraph("Account no"));
-  table.getCell(0, 2).addContent(new Paragraph("Principal Loan"));
-  table.getCell(0, 2).addContent(new Paragraph("Outstanding Interest "));
-  table.getCell(0, 2).addContent(new Paragraph("Principal Arrears"));
-  table.getCell(0, 2).addContent(new Paragraph("Total Arrears"));*/
-  // end crd
-
   document.createParagraph(" ");
   document.createParagraph("Yours sincerely, ");
   // sign
@@ -246,9 +240,9 @@ router.post('/download', function (req, res) {
   const packer = new Packer();
 
   packer.toBuffer(document).then((buffer) => {
-    fs.writeFileSync(letter_data.cardacct + "-prelisting.docx", buffer);
+    fs.writeFileSync( LETTERS_DIR + letter_data.cardacct + "prelisting.docx", buffer);
     //conver to pdf
-    res.sendFile(path.join(__dirname + '.../../' + letter_data.cardacct + '-prelisting.docx'));
+    res.sendFile(path.join( LETTERS_DIR + letter_data.cardacct + 'prelisting.docx'));
     // res.json({message: 'ok'})
   });
 });

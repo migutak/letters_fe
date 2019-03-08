@@ -11,6 +11,8 @@ var unoconv = require('unoconv');
 const word2pdf = require('word2pdf');
 var docxConverter = require('docx-pdf');
 
+const LETTERS_DIR = '/Users/kevinabongo/demands/';
+
 const { Document, Paragraph, Packer, TextRun } = docx;
 
 router.use(bodyParser.urlencoded({
@@ -171,9 +173,9 @@ router.post('/download', function (req, res) {
   const packer = new Packer();
 
   packer.toBuffer(document).then((buffer) => {
-    fs.writeFileSync(letter_data.acc + "day40.docx", buffer);
+    fs.writeFileSync(LETTERS_DIR + letter_data.acc + "day40.docx", buffer);
     //conver to pdf
-    res.sendFile(path.join(__dirname + '.../../' + letter_data.acc + 'day40.docx'));
+    res.sendFile(path.join(LETTERS_DIR + letter_data.acc + 'day40.docx'));
     // res.json({message: 'ok'})
   });
 });

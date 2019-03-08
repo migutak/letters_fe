@@ -8,6 +8,8 @@ var numeral = require('numeral');
 var dateFormat = require('dateformat');
 const bodyParser = require("body-parser");
 
+const LETTERS_DIR = '/Users/kevinabongo/demands/';
+
 const { Document, Paragraph, Packer, TextRun } = docx;
 
 router.use(bodyParser.urlencoded({
@@ -205,9 +207,9 @@ router.post('/download', function (req, res) {
   const packer = new Packer();
 
   packer.toBuffer(document).then((buffer) => {
-    fs.writeFileSync(letter_data.cardacct + "-overdue.docx", buffer);
+    fs.writeFileSync(LETTERS_DIR + "overdue.docx", buffer);
     //conver to pdf
-    res.sendFile(path.join(__dirname + '.../../' + letter_data.cardacct + '-overdue.docx'));
+    res.sendFile(path.join( LETTERS_DIR + letter_data.cardacct + 'overdue.docx'));
     // res.json({message: 'ok'})
   });
 });

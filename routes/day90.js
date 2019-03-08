@@ -13,6 +13,8 @@ var docxConverter = require('docx-pdf');
 
 const { Document, Paragraph, Packer, TextRun } = docx;
 
+const LETTERS_DIR = '/Users/kevinabongo/demands/';
+
 router.use(bodyParser.urlencoded({
   extended: true
 }));
@@ -168,9 +170,9 @@ router.post('/download', function (req, res) {
   const packer = new Packer();
 
   packer.toBuffer(document).then((buffer) => {
-    fs.writeFileSync(letter_data.acc + "day90.docx", buffer);
+    fs.writeFileSync(LETTERS_DIR + letter_data.acc + "day90.docx", buffer);
     //conver to pdf
-    res.sendFile(path.join(__dirname + '.../../' + letter_data.acc + 'day90.docx'));
+    res.sendFile(path.join( LETTERS_DIR + letter_data.acc + 'day90.docx'));
     // res.json({message: 'ok'})
   });
 });
