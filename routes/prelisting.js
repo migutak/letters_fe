@@ -259,17 +259,17 @@ router.post('/download', function (req, res) {
     const packer = new Packer();
 
     packer.toBuffer(document).then((buffer) => {
-        fs.writeFileSync(LETTERS_DIR + letter_data.acc + DATE + "prelisting.docx", buffer);
+        fs.writeFileSync(LETTERS_DIR + letter_data.cardacct + DATE + "prelisting.docx", buffer);
         //conver to pdf
         // if pdf format
         if (letter_data.format == 'pdf') {
           const convert = () => {
-            word2pdf.word2pdf(LETTERS_DIR + letter_data.acc + DATE + "prelisting.docx")
+            word2pdf.word2pdf(LETTERS_DIR + letter_data.cardacct + DATE + "prelisting.docx")
               .then(data => {
-                fs.writeFileSync(LETTERS_DIR + letter_data.acc + DATE + 'prelisting.pdf', data);
+                fs.writeFileSync(LETTERS_DIR + letter_data.cardacct + DATE + 'prelisting.pdf', data);
                 res.json({
                   result: 'success',
-                  message: LETTERS_DIR + letter_data.acc + DATE + "prelisting.pdf"
+                  message: LETTERS_DIR + letter_data.cardacct + DATE + "prelisting.pdf"
                 })
               }, error => {
                 console.log('error ...', error)
@@ -281,10 +281,10 @@ router.post('/download', function (req, res) {
           }
           convert();
         } else {
-          // res.sendFile(path.join(LETTERS_DIR + letter_data.acc + DATE + 'prelisting.docx'));
+          // res.sendFile(path.join(LETTERS_DIR + letter_data.cardacct + DATE + 'prelisting.docx'));
           res.json({
             result: 'success',
-            message: LETTERS_DIR + letter_data.acc + DATE + "prelisting.docx"
+            message: LETTERS_DIR + letter_data.cardacct + DATE + "prelisting.docx"
           })
         }
       }).catch((err) => {

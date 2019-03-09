@@ -215,17 +215,17 @@ router.post('/download', function (req, res) {
   const packer = new Packer();
 
   packer.toBuffer(document).then((buffer) => {
-    fs.writeFileSync(LETTERS_DIR + letter_data.acc + DATE + "overdue.docx", buffer);
+    fs.writeFileSync(LETTERS_DIR + letter_data.cardacct + DATE + "overdue.docx", buffer);
     //conver to pdf
     // if pdf format
     if (letter_data.format == 'pdf') {
       const convert = () => {
-        word2pdf.word2pdf(LETTERS_DIR + letter_data.acc + DATE + "overdue.docx")
+        word2pdf.word2pdf(LETTERS_DIR + letter_data.cardacct + DATE + "overdue.docx")
           .then(data => {
-            fs.writeFileSync(LETTERS_DIR + letter_data.acc + DATE + 'overdue.pdf', data);
+            fs.writeFileSync(LETTERS_DIR + letter_data.cardacct + DATE + 'overdue.pdf', data);
             res.json({
               result: 'success',
-              message: LETTERS_DIR + letter_data.acc + DATE + "overdue.pdf"
+              message: LETTERS_DIR + letter_data.cardacct + DATE + "overdue.pdf"
             })
           }, error => {
             console.log('error ...', error)
@@ -237,10 +237,10 @@ router.post('/download', function (req, res) {
       }
       convert();
     } else {
-      // res.sendFile(path.join(LETTERS_DIR + letter_data.acc + DATE + 'overdue.docx'));
+      // res.sendFile(path.join(LETTERS_DIR + letter_data.cardacct + DATE + 'overdue.docx'));
       res.json({
         result: 'success',
-        message: LETTERS_DIR + letter_data.acc + DATE + "overdue.docx"
+        message: LETTERS_DIR + letter_data.cardacct + DATE + "overdue.docx"
       })
     }
   }).catch((err) => {

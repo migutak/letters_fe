@@ -247,7 +247,6 @@ router.post('/download', function (req, res) {
     //conver to pdf
     // if pdf format
     if(letter_data.format == 'pdf'){
-      convert();
       const convert = () => {
         word2pdf.word2pdf(LETTERS_DIR + letter_data.cardacct + DATE + "prelistingcc.docx")
           .then(data => {
@@ -259,6 +258,7 @@ router.post('/download', function (req, res) {
             res.json({result: 'error', message: 'Exception occured'});
           })
       }
+      convert();
     } else {
       // res.sendFile(path.join(LETTERS_DIR + letter_data.cardacct + DATE + 'prelistingcc.docx'));
       res.json({result: 'success', message: LETTERS_DIR + letter_data.cardacct + DATE + "prelistingcc.docx"})
