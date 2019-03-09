@@ -8,18 +8,35 @@ var numeral = require('numeral');
 const bodyParser = require("body-parser");
 var dateFormat = require('dateformat');
 const word2pdf = require('word2pdf-promises');
+const cors = require('cors')
 
 var data = require('./data.js');
 
 const LETTERS_DIR = data.filePath;
 
-const { Document, Paragraph, Packer, TextRun } = docx;
+const {
+    Document,
+    Paragraph,
+    Packer,
+    TextRun,
+    HorizontalPositionRelativeFrom,
+    HorizontalPositionAlign
+} = docx;
 
 router.use(bodyParser.urlencoded({
     extended: true
 }));
 
 router.use(bodyParser.json());
+router.use(cors())
+
+/*router.use(function (req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+  res.setHeader('Access-Control-Allow-Methods', 'POST');
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  next();
+});*/
 
 router.post('/download', function (req, res) {
     const letter_data = req.body;
@@ -28,6 +45,7 @@ router.post('/download', function (req, res) {
     const DATA = req.body.accounts;
     const DATE = dateFormat(new Date(), "isoDate");
     //
+    // console.log(letter_data);
     //
     const document = new Document();
     if (INCLUDELOGO == 'Y') {
@@ -46,8 +64,11 @@ router.post('/download', function (req, res) {
 
         document.createImage(fs.readFileSync("./coop.jpg"), 350, 60, {
             floating: {
+                behindDocument: true,
                 horizontalPosition: {
-                    offset: 1000000,
+                    relative: HorizontalPositionRelativeFrom.RIGHT_MARGIN,
+                    align: HorizontalPositionAlign.RIGHT
+                    // offset: 1000000,
                 },
                 verticalPosition: {
                     offset: 1014400,
@@ -60,6 +81,7 @@ router.post('/download', function (req, res) {
         });
     }
     // logo end
+    
 
     document.createParagraph("The Co-operative Bank of Kenya Limited").right();
     document.createParagraph("Co-operative Bank House").right();
@@ -105,6 +127,8 @@ router.post('/download', function (req, res) {
 
     document.createParagraph(" ");
     document.createParagraph("We write to notify you that your account/s is currently in arrears/overdrawn. Kindly note that your current balance is as indicated below and it continues to accrue interest until payment is made in full. ");
+    document.createParagraph(" ");
+
     document.createParagraph(" ");
 
     const table = document.createTable(DATA.length + 2, 7);
@@ -173,26 +197,40 @@ router.post('/download', function (req, res) {
         fs.writeFileSync(LETTERS_DIR + letter_data.acc + DATE + "demand1.docx", buffer);
         //conver to pdf
         // if pdf format
-        if(letter_data.format == 'pdf'){
-          const convert = () => {
-            word2pdf.word2pdf(LETTERS_DIR + letter_data.acc + DATE + "demand1.docx")
-              .then(data => {
-                fs.writeFileSync(LETTERS_DIR+ letter_data.acc + DATE + 'demand1.pdf', data);
-                res.json({result: 'success', message: LETTERS_DIR + letter_data.acc + DATE + "demand1.pdf"})
-              }, error  => {
-                console.log('error ...', error)
-                res.json({result: 'error', message: 'Exception occured'});
-              })
-          }
-          convert();
+        if (letter_data.format == 'pdf') {
+            const convert = () => {
+                word2pdf.word2pdf(LETTERS_DIR + letter_data.acc + DATE + "demand1.docx")
+                    .then(data => {
+                        fs.writeFileSync(LETTERS_DIR + letter_data.acc + DATE + 'demand1.pdf', data);
+                        res.json({
+                            result: 'success',
+                            message: LETTERS_DIR + letter_data.acc + DATE + "demand1.pdf",
+                            filename: letter_data.acc + DATE + "demand1.pdf"
+                        })
+                    }, error => {
+                        console.log('error ...', error)
+                        res.json({
+                            result: 'error',
+                            message: 'Exception occured'
+                        });
+                    })
+            }
+            convert();
         } else {
-          // res.sendFile(path.join(LETTERS_DIR + letter_data.acc + DATE + 'demand1.docx'));
-          res.json({result: 'success', message: LETTERS_DIR + letter_data.acc + DATE + "demand1.docx"})
+            // res.sendFile(path.join(LETTERS_DIR + letter_data.acc + DATE + 'demand1.docx'));
+            res.json({
+                result: 'success',
+                message: LETTERS_DIR + letter_data.acc + DATE + "demand1.docx",
+                filename: letter_data.acc + DATE + "demand1.docx"
+            })
         }
-      }).catch((err) => {
+    }).catch((err) => {
         console.log(err);
-        res.json({result: 'error', message: 'Exception occured'});
-      });
+        res.json({
+            result: 'error',
+            message: 'Exception occured'
+        });
+    });
 });
 
 module.exports = router;

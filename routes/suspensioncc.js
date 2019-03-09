@@ -8,6 +8,7 @@ var numeral = require('numeral');
 var dateFormat = require('dateformat');
 const bodyParser = require("body-parser");
 const word2pdf = require('word2pdf-promises');
+const cors = require('cors')
 
 var data = require('./data.js');
 
@@ -20,6 +21,15 @@ router.use(bodyParser.urlencoded({
 }));
 
 router.use(bodyParser.json());
+router.use(cors())
+ 
+/*router.use(function (req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+  res.setHeader('Access-Control-Allow-Methods', 'POST');
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  next();
+});*/
 
 router.post('/download', function (req, res) {
   const letter_data = req.body;
@@ -185,7 +195,8 @@ router.post('/download', function (req, res) {
             fs.writeFileSync(LETTERS_DIR + letter_data.cardacct + DATE + 'suspension.pdf', data);
             res.json({
               result: 'success',
-              message: LETTERS_DIR + letter_data.cardacct + DATE + "suspension.pdf"
+              message: LETTERS_DIR + letter_data.cardacct + DATE + "suspension.pdf",
+              filename: letter_data.acc + DATE + "suspension.pdf"
             })
           }, error => {
             console.log('error ...', error)
@@ -200,7 +211,8 @@ router.post('/download', function (req, res) {
       // res.sendFile(path.join(LETTERS_DIR + letter_data.cardacct + DATE + 'suspension.docx'));
       res.json({
         result: 'success',
-        message: LETTERS_DIR + letter_data.cardacct + DATE + "suspension.docx"
+        message: LETTERS_DIR + letter_data.cardacct + DATE + "suspension.docx",
+        filename: letter_data.acc + DATE + "suspension.docx"
       })
     }
   }).catch((err) => {

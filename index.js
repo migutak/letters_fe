@@ -6,6 +6,7 @@ const fs = require('fs');
 var numeral = require('numeral');
 const bodyParser = require("body-parser");
 const router = express.Router();
+const cors = require('cors')
 
 //include the routes file
 var demand2 = require('./routes/demand2');
@@ -36,13 +37,21 @@ router.get('/', function (req, res) {
   res.json({ message: 'hooray! welcome to our rest video api!' }); 
 });
 
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(cors())
+ 
+app.use(function (req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+  res.setHeader('Access-Control-Allow-Methods', 'POST');
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  next();
+});
 
 
 //add the router
 app.use('/', router);
-app.listen(process.env.port || 8002);
+app.listen(process.env.port || 8003);
 
-console.log('Running at Port 8002');
+console.log('Running at Port 8003');

@@ -8,7 +8,7 @@ var numeral = require('numeral');
 const bodyParser = require("body-parser");
 var dateFormat = require('dateformat');
 const word2pdf = require('word2pdf-promises');
-
+const cors = require('cors')
 var data = require('./data.js');
 
 const LETTERS_DIR = data.filePath;
@@ -20,6 +20,15 @@ router.use(bodyParser.urlencoded({
 }));
 
 router.use(bodyParser.json());
+router.use(cors())
+ 
+/*router.use(function (req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+  res.setHeader('Access-Control-Allow-Methods', 'POST');
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  next();
+});*/
 
 router.post('/download', function (req, res) {
     const letter_data = req.body;
@@ -238,7 +247,8 @@ router.post('/download', function (req, res) {
                 fs.writeFileSync(LETTERS_DIR + letter_data.acc + DATE + 'postlistingsecured.pdf', data);
                 res.json({
                   result: 'success',
-                  message: LETTERS_DIR + letter_data.acc + DATE + "postlistingsecured.pdf"
+                  message: LETTERS_DIR + letter_data.acc + DATE + "postlistingsecured.pdf",
+                  filename: letter_data.acc + DATE + "postlistingsecured.pdf"
                 })
               }, error => {
                 console.log('error ...', error)
@@ -253,7 +263,8 @@ router.post('/download', function (req, res) {
           // res.sendFile(path.join(LETTERS_DIR + letter_data.acc + DATE + 'postlistingsecured.docx'));
           res.json({
             result: 'success',
-            message: LETTERS_DIR + letter_data.acc + DATE + "postlistingsecured.docx"
+            message: LETTERS_DIR + letter_data.acc + DATE + "postlistingsecured.docx",
+            filename: letter_data.acc + DATE + "postlistingsecured.docx"
           })
         }
       }).catch((err) => {
