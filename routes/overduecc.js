@@ -207,9 +207,9 @@ router.post('/download', function (req, res) {
   const packer = new Packer();
 
   packer.toBuffer(document).then((buffer) => {
-    fs.writeFileSync(LETTERS_DIR + "overdue.docx", buffer);
+    fs.writeFileSync(LETTERS_DIR + letter_data.cardacct + DATE +"overdue.docx", buffer);
     //conver to pdf
-    res.sendFile(path.join( LETTERS_DIR + letter_data.cardacct + 'overdue.docx'));
+    res.sendFile(path.join( LETTERS_DIR + letter_data.cardacct + DATE +'overdue.docx'));
     // res.json({message: 'ok'})
   });
 });

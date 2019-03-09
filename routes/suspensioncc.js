@@ -172,9 +172,9 @@ router.post('/download', function (req, res) {
   const packer = new Packer();
 
   packer.toBuffer(document).then((buffer) => {
-    fs.writeFileSync(LETTERS_DIR + letter_data.cardacct + "-suspension.docx", buffer);
+    fs.writeFileSync(LETTERS_DIR + letter_data.cardacct + DATE +"suspension.docx", buffer);
     //conver to pdf
-    res.sendFile(path.join( LETTERS_DIR + letter_data.cardacct + '-suspension.docx'));
+    res.sendFile(path.join( LETTERS_DIR + letter_data.cardacct + DATE +'suspension.docx'));
     // res.json({message: 'ok'})
   });
 });

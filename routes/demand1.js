@@ -87,6 +87,7 @@ router.post('/download', function (req, res) {
     pddate.addRun(ddate);
     document.addParagraph(pddate);
 
+    document.createParagraph(" ");
     document.createParagraph(letter_data.custname);
     document.createParagraph(letter_data.address);
     document.createParagraph(letter_data.custname);
@@ -151,7 +152,6 @@ router.post('/download', function (req, res) {
     document.createParagraph("BRANCH MANAGER ");
     document.createParagraph(letter_data.branchname + " BRANCH");
 
-
     document.createParagraph(" ");
 
     if (GURARANTORS) {
@@ -170,10 +170,16 @@ router.post('/download', function (req, res) {
     const packer = new Packer();
 
     packer.toBuffer(document).then((buffer) => {
-        fs.writeFileSync(LETTERS_DIR + "demand1.docx", buffer);
+        const letterpath = LETTERS_DIR + letter_data.acc + dateFormat(new Date(), 'isoDate');
+        fs.writeFileSync(letterpath + "demand1.docx", buffer);
         //conver to pdf
-        
-        res.sendFile(path.join(LETTERS_DIR + '.../../' + letter_data.acc + 'demand1.docx'));
+        docxConverter(letterpath + "demand1.docx", letterpath + "demand1.pdf",function(err,result){
+            if(err){
+              console.log(err);
+            }
+            console.log('result'+result);
+          });
+        res.sendFile(path.join(letterpath + 'demand1.docx'));
         // res.json({message: 'ok'})
     });
 });

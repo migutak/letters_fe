@@ -146,7 +146,7 @@ router.post('/download', function (req, res) {
   document.addParagraph(ptxt3);
 
   document.createParagraph(" ");
-  const txt4 = new TextRun("WYou have a right of access to your credit report at the CRBs and you may dispute any erroneous information. You may request for your report by contacting the CRBs at the following addresses: ");
+  const txt4 = new TextRun("You have a right of access to your credit report at the CRBs and you may dispute any erroneous information. You may request for your report by contacting the CRBs at the following addresses: ");
   const ptxt4 = new Paragraph();
   txt4.size(20);
   ptxt4.addRun(txt4);

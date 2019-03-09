@@ -14,8 +14,8 @@ var overduecc = require('./routes/overduecc');
 var suspensioncc = require('./routes/suspensioncc');
 var prelistingcc = require('./routes/prelistingcc');
 var prelisting = require('./routes/prelisting');
-var postlistingunsecured = require('./routes/postlistingunsecured');
 var postlistingsecured = require('./routes/postlistingsecured');
+var postlistingunsecured = require('./routes/postlistingunsecured');
 var day40 = require('./routes/day40');
 var day90 = require('./routes/day90');
 
