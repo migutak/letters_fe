@@ -7,6 +7,8 @@ const fs = require('fs');
 var numeral = require('numeral');
 var dateFormat = require('dateformat');
 const bodyParser = require("body-parser");
+const word2pdf = require('word2pdf-promises');
+// const word2pdf = require('word2pdf');
 
 const LETTERS_DIR = '/Users/kevinabongo/demands/';
 
@@ -240,9 +242,27 @@ router.post('/download', function (req, res) {
   const packer = new Packer();
 
   packer.toBuffer(document).then((buffer) => {
-    fs.writeFileSync( LETTERS_DIR + letter_data.cardacct + "prelisting.docx", buffer);
+    fs.writeFileSync(LETTERS_DIR + letter_data.cardacct + DATE + "prelistingcc.docx", buffer);
     //conver to pdf
-    res.sendFile(path.join( LETTERS_DIR + letter_data.cardacct + 'prelisting.docx'));
+    /*const convert = async () => {
+      console.log('function called ...');
+      const data = await word2pdf(LETTERS_DIR + letter_data.cardacct + DATE + "prelistingcc.docx")
+      fs.writeFileSync('prelistingcc.pdf', data);
+    }*/
+    //
+    const convert = () => {
+      console.log('function called ...');
+      word2pdf.word2pdf(LETTERS_DIR + letter_data.cardacct + DATE + "prelistingcc.docx")
+        .then(data => {
+          console.log('data here ...');
+          fs.writeFileSync(LETTERS_DIR+ letter_data.cardacct + DATE + 'prelistingcc.pdf', data);
+          res.sendFile(path.join(LETTERS_DIR + letter_data.cardacct + DATE + 'prelistingcc.docx'));
+        }, error  => {
+          console.log('error ...', error)
+        })
+    }
+
+    convert();
     // res.json({message: 'ok'})
   });
 });
