@@ -7,11 +7,11 @@ const fs = require('fs');
 var numeral = require('numeral');
 const bodyParser = require("body-parser");
 var dateFormat = require('dateformat');
-var unoconv = require('unoconv');
-const word2pdf = require('word2pdf');
-var docxConverter = require('docx-pdf');
+const word2pdf = require('word2pdf-promises');
 
-const LETTERS_DIR = '/Users/kevinabongo/demands/';
+var data = require('./data.js');
+
+const LETTERS_DIR = data.filePath;
 
 const { Document, Paragraph, Packer, TextRun } = docx;
 
@@ -191,11 +191,29 @@ router.post('/download', function (req, res) {
     const packer = new Packer();
 
     packer.toBuffer(document).then((buffer) => {
-        fs.writeFileSync(LETTERS_DIR + letter_data.acc + DATE +"demand2.docx", buffer);
+        fs.writeFileSync(LETTERS_DIR + letter_data.acc + DATE + "demand2.docx", buffer);
         //conver to pdf
-        res.sendFile(path.join(LETTERS_DIR + letter_data.acc + DATE +'demand2.docx'));
-        // res.json({message: 'ok'})
-    });
+        // if pdf format
+        if(letter_data.format == 'pdf'){
+          const convert = () => {
+            word2pdf.word2pdf(LETTERS_DIR + letter_data.acc + DATE + "demand2.docx")
+              .then(data => {
+                fs.writeFileSync(LETTERS_DIR+ letter_data.acc + DATE + 'demand2.pdf', data);
+                res.json({result: 'success', message: LETTERS_DIR + letter_data.acc + DATE + "demand2.pdf"})
+              }, error  => {
+                console.log('error ...', error)
+                res.json({result: 'error', message: 'Exception occured'});
+              })
+          }
+          convert();
+        } else {
+          // res.sendFile(path.join(LETTERS_DIR + letter_data.acc + DATE + 'prelistingcc.docx'));
+          res.json({result: 'success', message: LETTERS_DIR + letter_data.acc + DATE + "demand2.docx"})
+        }
+      }).catch((err) => {
+        console.log(err);
+        res.json({result: 'error', message: 'Exception occured'});
+      });
 });
 
 module.exports = router;

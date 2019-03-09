@@ -9,8 +9,9 @@ var dateFormat = require('dateformat');
 const bodyParser = require("body-parser");
 const word2pdf = require('word2pdf-promises');
 // const word2pdf = require('word2pdf');
+var data = require('./data.js');
 
-const LETTERS_DIR = '/Users/kevinabongo/demands/';
+const LETTERS_DIR = data.filePath;
 
 const { Document, Paragraph, Packer, TextRun, BorderStyle, Borders } = docx;
 
@@ -244,26 +245,27 @@ router.post('/download', function (req, res) {
   packer.toBuffer(document).then((buffer) => {
     fs.writeFileSync(LETTERS_DIR + letter_data.cardacct + DATE + "prelistingcc.docx", buffer);
     //conver to pdf
-    /*const convert = async () => {
-      console.log('function called ...');
-      const data = await word2pdf(LETTERS_DIR + letter_data.cardacct + DATE + "prelistingcc.docx")
-      fs.writeFileSync('prelistingcc.pdf', data);
-    }*/
-    //
-    const convert = () => {
-      console.log('function called ...');
-      word2pdf.word2pdf(LETTERS_DIR + letter_data.cardacct + DATE + "prelistingcc.docx")
-        .then(data => {
-          console.log('data here ...');
-          fs.writeFileSync(LETTERS_DIR+ letter_data.cardacct + DATE + 'prelistingcc.pdf', data);
-          res.sendFile(path.join(LETTERS_DIR + letter_data.cardacct + DATE + 'prelistingcc.docx'));
-        }, error  => {
-          console.log('error ...', error)
-        })
+    // if pdf format
+    if(letter_data.format == 'pdf'){
+      convert();
+      const convert = () => {
+        word2pdf.word2pdf(LETTERS_DIR + letter_data.cardacct + DATE + "prelistingcc.docx")
+          .then(data => {
+            console.log('data here ...');
+            fs.writeFileSync(LETTERS_DIR+ letter_data.cardacct + DATE + 'prelistingcc.pdf', data);
+            res.json({result: 'success', message: LETTERS_DIR + letter_data.cardacct + DATE + "prelistingcc.pdf"})
+          }, error  => {
+            console.log('error ...', error)
+            res.json({result: 'error', message: 'Exception occured'});
+          })
+      }
+    } else {
+      // res.sendFile(path.join(LETTERS_DIR + letter_data.cardacct + DATE + 'prelistingcc.docx'));
+      res.json({result: 'success', message: LETTERS_DIR + letter_data.cardacct + DATE + "prelistingcc.docx"})
     }
-
-    convert();
-    // res.json({message: 'ok'})
+  }).catch((err) => {
+    console.log(err);
+    res.json({result: 'error', message: 'Exception occured'});
   });
 });
 

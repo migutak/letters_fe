@@ -7,10 +7,18 @@ const fs = require('fs');
 var numeral = require('numeral');
 var dateFormat = require('dateformat');
 const bodyParser = require("body-parser");
+const word2pdf = require('word2pdf-promises');
 
-const LETTERS_DIR = '/Users/kevinabongo/demands/';
+var data = require('./data.js');
 
-const { Document, Paragraph, Packer, TextRun } = docx;
+const LETTERS_DIR = data.filePath;
+
+const {
+  Document,
+  Paragraph,
+  Packer,
+  TextRun
+} = docx;
 
 router.use(bodyParser.urlencoded({
   extended: true
@@ -207,10 +215,40 @@ router.post('/download', function (req, res) {
   const packer = new Packer();
 
   packer.toBuffer(document).then((buffer) => {
-    fs.writeFileSync(LETTERS_DIR + letter_data.cardacct + DATE +"overdue.docx", buffer);
+    fs.writeFileSync(LETTERS_DIR + letter_data.acc + DATE + "overdue.docx", buffer);
     //conver to pdf
-    res.sendFile(path.join( LETTERS_DIR + letter_data.cardacct + DATE +'overdue.docx'));
-    // res.json({message: 'ok'})
+    // if pdf format
+    if (letter_data.format == 'pdf') {
+      const convert = () => {
+        word2pdf.word2pdf(LETTERS_DIR + letter_data.acc + DATE + "overdue.docx")
+          .then(data => {
+            fs.writeFileSync(LETTERS_DIR + letter_data.acc + DATE + 'overdue.pdf', data);
+            res.json({
+              result: 'success',
+              message: LETTERS_DIR + letter_data.acc + DATE + "overdue.pdf"
+            })
+          }, error => {
+            console.log('error ...', error)
+            res.json({
+              result: 'error',
+              message: 'Exception occured'
+            });
+          })
+      }
+      convert();
+    } else {
+      // res.sendFile(path.join(LETTERS_DIR + letter_data.acc + DATE + 'overdue.docx'));
+      res.json({
+        result: 'success',
+        message: LETTERS_DIR + letter_data.acc + DATE + "overdue.docx"
+      })
+    }
+  }).catch((err) => {
+    console.log(err);
+    res.json({
+      result: 'error',
+      message: 'Exception occured'
+    });
   });
 });
 
